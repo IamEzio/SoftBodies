@@ -3,7 +3,8 @@
 #include "Utils.hpp"
 #include "Object.hpp"
 
-uint refreshms = 20;
+#define REFRESH_MS 20u
+
 Object obj_;
 
 void display() {
@@ -26,8 +27,11 @@ void display() {
 
     glPushMatrix();
     glLoadIdentity();
-    glColor3i(0,0,0);
+    glColor3i(0, 0, 0);
 
+    uint iterations = 100;
+    for (uint i = 0; i < iterations; i++)
+        obj_.calculate(REFRESH_MS / 1000.f / iterations);
     obj_.draw(racgra::wire_);
 
     glPopMatrix();
@@ -37,12 +41,11 @@ void display() {
 
 void keyboard(unsigned char key, int mousex, int mousey) {
     racgra::camera_control(key, 0.5);
-    racgra::redisplay_all();
 }
 
 void timer(int ignore) {
     racgra::redisplay_all();
-    glutTimerFunc(refreshms, timer, 0);
+    glutTimerFunc(REFRESH_MS, timer, 0);
 }
 
 int main(int argc, char **argv) {
@@ -55,9 +58,9 @@ int main(int argc, char **argv) {
     obj_ = Object::load(object);
 
     bound b = obj_.get_bounds();
-    racgra::camera_[0] = b.maxx + 10;
-    racgra::camera_[1] = b.maxy + 10;
-    racgra::camera_[2] = b.maxz + 10;
+    racgra::camera_[0] = b.maxx + 1;
+    racgra::camera_[1] = b.maxy + 1;
+    racgra::camera_[2] = b.maxz + 1;
     racgra::near_ = 0.1;
     racgra::far_ = 100;
     racgra::fovy_ = 45;

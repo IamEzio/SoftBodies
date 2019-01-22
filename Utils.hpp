@@ -9,9 +9,13 @@
 #include <eigen3/Dense>
 #include <cfloat>
 
-typedef struct fac {
+struct fac {
     std::vector<uint> vertices;
-} fac;
+
+    uint operator[](uint index) const {
+        return vertices[index];
+    }
+};
 
 typedef struct bound {
     GLdouble minx = DBL_MAX, maxx = DBL_MIN, miny = DBL_MAX, maxy = DBL_MIN, minz = DBL_MAX, maxz = DBL_MIN;
@@ -139,6 +143,7 @@ namespace racgra {
             default:
                 return;
         }
+        racgra::redisplay_all();
     }
 
     void mouse_wheel(int button, int dir, int x, int y) {
