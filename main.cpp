@@ -3,8 +3,9 @@
 #include "Utils.hpp"
 #include "Object.hpp"
 
-#define REFRESH_MS 20u
+#define REFRESH_MS 100u
 
+bool paused_ = true;
 Object obj_;
 
 void display() {
@@ -28,24 +29,43 @@ void display() {
     glPushMatrix();
     glLoadIdentity();
     glColor3i(0, 0, 0);
-
-    uint iterations = 100;
-    for (uint i = 0; i < iterations; i++)
-        obj_.calculate(REFRESH_MS / 1000.f / iterations);
     obj_.draw(racgra::wire_);
-
     glPopMatrix();
 
     glutSwapBuffers();
 }
 
-void keyboard(unsigned char key, int mousex, int mousey) {
-    racgra::camera_control(key, 0.5);
-}
-
 void timer(int ignore) {
+    if (paused_)
+        return;
+    uint iterations = 60;
+    for (uint i = 0; i < iterations; i++) {
+        obj_.calculate(REFRESH_MS / 1000. / iterations);
+    }
     racgra::redisplay_all();
     glutTimerFunc(REFRESH_MS, timer, 0);
+}
+
+void keyboard(unsigned char key, int mousex, int mousey) {
+    racgra::camera_control(key, 0.5);
+    switch (key) {
+        case '+':
+            obj_.gravity_acc_[2] -= 0.2;
+            std::cout << "Gravity: " << obj_.gravity_acc_[2] << std::endl;
+            break;
+        case '-':
+            obj_.gravity_acc_[2] += 0.2;
+            if (obj_.gravity_acc_[2] > 0)
+                obj_.gravity_acc_[2] = 0;
+            std::cout << "Gravity: " << obj_.gravity_acc_[2] << std::endl;
+            break;
+        case ' ':
+            paused_ = !paused_;
+            if (!paused_) {
+                timer(0);
+            }
+            break;
+    }
 }
 
 int main(int argc, char **argv) {
@@ -56,11 +76,11 @@ int main(int argc, char **argv) {
 
     std::string object("../res/cube.obj");
     obj_ = Object::load(object);
+//    obj_ = Object({2, 1, 0}, {2, 1, 1});
 
-    bound b = obj_.get_bounds();
-    racgra::camera_[0] = b.maxx + 1;
-    racgra::camera_[1] = b.maxy + 1;
-    racgra::camera_[2] = b.maxz + 1;
+    obj_.move({0, 0, 5});
+
+    racgra::camera_ = {4, 3, 3};
     racgra::near_ = 0.1;
     racgra::far_ = 100;
     racgra::fovy_ = 45;
@@ -70,6 +90,7 @@ int main(int argc, char **argv) {
     glutDisplayFunc(display);
     glutKeyboardFunc(keyboard);
     glutMouseFunc(racgra::mouse_wheel);
+
 
     racgra::redisplay_all();
     timer(0);

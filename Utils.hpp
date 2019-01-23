@@ -12,6 +12,12 @@
 struct fac {
     std::vector<uint> vertices;
 
+    fac(uint v1, uint v2, uint v3) {
+        vertices.emplace_back(v1);
+        vertices.emplace_back(v2);
+        vertices.emplace_back(v3);
+    }
+
     uint operator[](uint index) const {
         return vertices[index];
     }
@@ -25,9 +31,9 @@ typedef struct bound {
 namespace racgra {
     GLuint window_;
     GLuint win_width_ = 600, win_height_ = 600, win_x_ = 100, win_y_ = 100;
-    Eigen::Vector3f camera_(1.0, 1.2, 1.4);
-    Eigen::Vector3f lookat_(0.0, 0.0, 0.0);
-    Eigen::Vector3f lookup_(0.0, 0.0, 1.0);
+    Eigen::Vector3d camera_(1.0, 1.2, 1.4);
+    Eigen::Vector3d lookat_(0.0, 0.0, 0.0);
+    Eigen::Vector3d lookup_(0.0, 0.0, 1.0);
     double angle_ = 0;
     double fovy_ = 1.0;
     GLdouble near_ = 0.5, far_ = 20.0;
@@ -58,9 +64,9 @@ namespace racgra {
     }
 
     void zoom(bool in, double amount) {
-        Eigen::Vector3f dist = lookat_ - camera_;
+        Eigen::Vector3d dist = lookat_ - camera_;
         // Movement vector.
-        Eigen::Vector3f v(dist);
+        Eigen::Vector3d v(dist);
         v.normalize();
         v *= amount;
         // End if movement is larger than distance.
@@ -76,17 +82,17 @@ namespace racgra {
         // X
         glLineWidth(3);
         glBegin(GL_LINES);
-        glColor3f(1, 0, 0);
-        glVertex3f(0, 0, 0);
-        glVertex3f(1, 0, 0);
+        glColor3d(1, 0, 0);
+        glVertex3d(0, 0, 0);
+        glVertex3d(1, 0, 0);
         // Y
-        glColor3f(0, 1, 0);
-        glVertex3f(0, 0, 0);
-        glVertex3f(0, 1, 0);
+        glColor3d(0, 1, 0);
+        glVertex3d(0, 0, 0);
+        glVertex3d(0, 1, 0);
         // Z
-        glColor3f(0, 0, 1);
-        glVertex3f(0, 0, 0);
-        glVertex3f(0, 0, 1);
+        glColor3d(0, 0, 1);
+        glVertex3d(0, 0, 0);
+        glVertex3d(0, 0, 1);
         glEnd();
         glLineWidth(1);
         glPopMatrix();
@@ -143,7 +149,7 @@ namespace racgra {
             default:
                 return;
         }
-        racgra::redisplay_all();
+        redisplay_all();
     }
 
     void mouse_wheel(int button, int dir, int x, int y) {
@@ -161,6 +167,7 @@ namespace racgra {
                 zoom(false, amount_);
                 break;
         }
+        redisplay_all();
     }
 };
 
