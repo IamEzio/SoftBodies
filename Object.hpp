@@ -60,6 +60,7 @@ public:
             for (uint index : f.vertices) {
                 const Vector3d &v = vertices_.at(index).position;
                 glVertex3d(v[0], v[1], v[2]);
+                glTexCoord3d(v[0], v[1], v[2]);
             }
             glEnd();
             glBegin(GL_POINTS);

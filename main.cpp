@@ -8,28 +8,33 @@
 bool paused_ = true;
 Object obj_;
 
+unsigned int width, height;
+unsigned char *texture_data;
+
 void display() {
     glMatrixMode(GL_MODELVIEW);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     racgra::draw_origin();
 
-//    // Draw ground.
-//    glPushMatrix();
-//    glLoadIdentity();
-//    glColor3f(0.5, 0.5, 0.5);
-//    glBegin(GL_QUADS);
-//    glVertex3f(-500, -500, 0);
-//    glVertex3f(-500, 500, 0);
-//    glVertex3f(500, 500, 0);
-//    glVertex3f(500, -500, 0);
-//    glEnd();
-//    glPopMatrix();
-
     glPushMatrix();
     glLoadIdentity();
     glColor3i(0, 0, 0);
-    obj_.draw(racgra::wire_);
+
+    glEnable(GL_TEXTURE_2D);
+    glEnable(GL_DEPTH_TEST);
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_DECAL);
+
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_BGR, GL_UNSIGNED_BYTE, texture_data);
+
+    obj_.draw(false);
+
+    glDisable(GL_TEXTURE_2D);
+
     glPopMatrix();
 
     glutSwapBuffers();
@@ -74,11 +79,34 @@ int main(int argc, char **argv) {
     glutInitWindowSize(800, 600);
     glutInitWindowPosition(100, 100);
 
-    std::string object("../res/cube.obj");
+    std::string object("../res/objects/cube.obj");
     obj_ = Object::load(object);
-//    obj_ = Object({2, 1, 0}, {2, 1, 1});
 
-    obj_.move({0, 0, 5});
+    obj_.move({0, 0, 0.5});
+
+    // Load texture.
+    unsigned char header[54];
+    char *texture_file = const_cast<char *>("../res/textures/cat.bmp");
+    FILE *file = fopen(texture_file, "rb");
+    if (!file) {
+        std::cout << "Image could not be opened! " << texture_file << std::endl;
+        return 1;
+    } else if (fread(header, 1, 54, file) != 54) { // If not 54 bytes read : problem
+        printf("Not a correct BMP file\n");
+        return 1;
+    } else if (header[0] != 'B' || header[1] != 'M') {
+        printf("Not a correct BMP file\n");
+        return 1;
+    }
+    unsigned int dataPos = *(int *) &(header[0x0A]);
+    unsigned int imageSize = *(int *) &(header[0x22]);
+    width = *(int *) &(header[0x12]);
+    height = *(int *) &(header[0x16]);
+    if (imageSize == 0) imageSize = width * height * 3;
+    if (dataPos == 0) dataPos = 54;
+    texture_data = new unsigned char[imageSize];
+    fread(texture_data, imageSize, 1, file);
+    fclose(file);
 
     racgra::camera_ = {4, 3, 3};
     racgra::near_ = 0.1;
