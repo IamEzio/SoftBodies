@@ -23,11 +23,33 @@ private:
         Vector3d position;
         Vector3d velocity;
         Vector3d acceleration;
+        Vector3d normal;
+
         double mass;
         bool movable;
 
-        Vertex(Vector3d ver, Vector3d vel, Vector3d forc, double mass, bool movable) :
-                position(ver), velocity(vel), acceleration(forc), mass(mass), movable(movable) {}
+        Vertex(Vector3d pos) : position(std::move(pos)) {
+            velocity = {0, 0, 0};
+            acceleration = {0, 0, 0};
+            normal = {0, 0, 0};
+            mass = 0;
+            movable = true;
+        }
+    };
+
+    struct fac {
+        std::vector<uint> vertices;
+        std::vector<Vector2d> texture_positions;
+
+        fac(uint v1, uint v2, uint v3) {
+            vertices.emplace_back(v1);
+            vertices.emplace_back(v2);
+            vertices.emplace_back(v3);
+        }
+
+        uint operator[](uint index) const {
+            return vertices[index];
+        }
     };
 
     // Loaded.
@@ -46,29 +68,24 @@ public:
 
     Object() = default;
 
-    Object(Vector3d p1, Vector3d p2) {
-        vertices_.emplace_back(p1, Vector3d(0, 0, 0), Vector3d(0, 0, 0), 0.5, true);
-        vertices_.emplace_back(p2, Vector3d(0, 0, 0), Vector3d(0, 0, 0), 0.5, true);
-        faces_.emplace_back(0, 0, 1);
-        initialize();
-    }
-
-    void draw(bool wire = false) const {
+    void draw(bool points = false) const {
         for (const fac &f : faces_) {
-            glPointSize(7);
-            glBegin(wire ? GL_LINE_LOOP : GL_TRIANGLES);
-            for (uint index : f.vertices) {
-                const Vector3d &v = vertices_.at(index).position;
-                glVertex3d(v[0], v[1], v[2]);
-                glTexCoord3d(v[0], v[1], v[2]);
+            glBegin(GL_TRIANGLES);
+            for (uint i = 0; i < 3; i++) {
+                const Vertex &v = vertices_.at(f.vertices[i]);
+                glTexCoord2d(f.texture_positions[i][0], f.texture_positions[i][1]);
+                glVertex3d(v.position[0], v.position[1], v.position[2]);
             }
             glEnd();
-            glBegin(GL_POINTS);
-            for (uint index : f.vertices) {
-                const Vector3d &v = vertices_.at(index).position;
-                glVertex3d(v[0], v[1], v[2]);
+            if (points) {
+                glPointSize(7);
+                glBegin(GL_POINTS);
+                for (uint index : f.vertices) {
+                    const Vector3d &v = vertices_.at(index).position;
+                    glVertex3d(v[0], v[1], v[2]);
+                }
+                glEnd();
             }
-            glEnd();
         }
     }
 
@@ -156,8 +173,9 @@ private:
             container = val;
     }
 
-    inline bool parse(const char *cmd, char *args, ulong line) {
-        if (!std::strcmp(cmd, "v")) {  // vertex
+    inline bool parse(const char *cmd, char *args, ulong line,
+                      std::vector<Vector2d> &tmp_txtr, std::vector<Vector3d> &tmp_norm) {
+        if (std::strcmp(cmd, "v") == 0) {  // Vertex.
             double x, y, z;
             if (!sscanf(args, "%lf %lf %lf", &x, &y, &z))
                 throw std::runtime_error("Error reading vertex on line " + std::to_string(line));
@@ -168,28 +186,73 @@ private:
             update_bound(y, bounds_.maxy, false);
             update_bound(z, bounds_.minz, true);
             update_bound(z, bounds_.maxz, false);
-            vertices_.push_back(Vertex(Vector3d(x, y, z), Vector3d(0., 0., 0.), Vector3d(0., 0., 0.), 0., true));
+            vertices_.emplace_back(Vector3d(x, y, z));
             return true;
 
-        } else if (!std::strcmp(cmd, "f")) { // face
-            uint v1, v2, v3; // Vertex indexes.
-            if (!sscanf(args, "%u %u %u", &v1, &v2, &v3))
-                throw std::runtime_error("Error reading face on line " + std::to_string(line));
-            // Correct indexes.
-            ulong size = vertices_.size();
-            if (v1 > size)
-                throw std::runtime_error("(" + std::to_string(line) +
-                                         ") Unknown vertex index: " + std::to_string(v1));
-            if (v2 > size)
-                throw std::runtime_error("(" + std::to_string(line) +
-                                         ") Unknown vertex index: " + std::to_string(v2));
-            if (v3 > size)
-                throw std::runtime_error("(" + std::to_string(line) +
-                                         ") Unknown vertex index: " + std::to_string(v3));
-            // Construct.
-            std::vector<uint> sss;
-            faces_.emplace_back(v1 - 1, v2 - 1, v3 - 1);
+        } else if (strcmp(cmd, "vt") == 0) {  // Texture coordinate.
+            double u, v;
+            if (!sscanf(args, "%lf %lf", &u, &v))
+                throw std::runtime_error("Error reading vertex texture coordinate on line " + std::to_string(line));
+            tmp_txtr.emplace_back(u, v);
             return true;
+
+        } else if (strcmp(cmd, "vn") == 0) {  // Vertex normal.
+            double x, y, z;
+            if (!sscanf(args, "%lf %lf %lf", &x, &y, &z))
+                throw std::runtime_error("Error reading vertex normal coordinate on line " + std::to_string(line));
+            tmp_norm.emplace_back(x, y, z);
+            return true;
+
+        } else if (std::strcmp(cmd, "f") == 0) {  // Face.
+            uint v1, v2, v3; // Vertex indexes.
+            uint t1, t2, t3; // Texture indexes.
+            uint n1, n2, n3; // Normal indexes.
+
+            if (sscanf(args, "%d/%d/%d %d/%d/%d %d/%d/%d", &v1, &t1, &n1, &v2, &t2, &n2, &v3, &t3, &n3) == 9) {
+                fac f(v1 - 1, v2 - 1, v3 - 1);
+                f.texture_positions.push_back(tmp_txtr[t1 - 1]);
+                f.texture_positions.push_back(tmp_txtr[t2 - 1]);
+                f.texture_positions.push_back(tmp_txtr[t3 - 1]);
+                faces_.push_back(f);
+
+                vertices_[v1 - 1].normal = tmp_norm[n1 - 1];
+                vertices_[v2 - 1].normal = tmp_norm[n2 - 1];
+                vertices_[v3 - 1].normal = tmp_norm[n3 - 1];
+                return true;
+
+            } else if (sscanf(args, "%d/%d %d/%d %d/%d", &v1, &t1, &v2, &t2, &v3, &t3) == 6) {
+                if (!tmp_norm.empty()) {
+                    faces_.emplace_back(v1 - 1, v2 - 1, v3 - 1);
+                    vertices_[v1 - 1].normal = tmp_norm[t1 - 1];
+                    vertices_[v2 - 1].normal = tmp_norm[t2 - 1];
+                    vertices_[v3 - 1].normal = tmp_norm[t3 - 1];
+                } else {
+                    fac f(v1 - 1, v2 - 1, v3 - 1);
+                    f.texture_positions.push_back(tmp_txtr[t1 - 1]);
+                    f.texture_positions.push_back(tmp_txtr[t2 - 1]);
+                    f.texture_positions.push_back(tmp_txtr[t3 - 1]);
+                    faces_.push_back(f);
+                }
+                return true;
+
+            } else if (sscanf(args, "%u %u %u", &v1, &v2, &v3) == 3) {// Correct indexes.
+                ulong size = vertices_.size();
+                if (v1 > size)
+                    throw std::runtime_error("(" + std::to_string(line) +
+                                             ") Unknown vertex index: " + std::to_string(v1));
+                if (v2 > size)
+                    throw std::runtime_error("(" + std::to_string(line) +
+                                             ") Unknown vertex index: " + std::to_string(v2));
+                if (v3 > size)
+                    throw std::runtime_error("(" + std::to_string(line) +
+                                             ") Unknown vertex index: " + std::to_string(v3));
+                // Construct.
+                faces_.emplace_back(v1 - 1, v2 - 1, v3 - 1);
+                return true;
+
+            } else {
+                throw std::runtime_error("Error reading face on line " + std::to_string(line));
+            }
         }
         return false;
     }
@@ -200,6 +263,8 @@ public:
         if (!f)
             throw std::runtime_error("Cannot open file: " + filepath);
         Object obj;
+        std::vector<Vector2d> tmp_texture_coordinates;
+        std::vector<Vector3d> tmp_normal;
         uint line = 0;
         while (true) {
             ++line;
@@ -211,7 +276,7 @@ public:
 
             if (res < 2 || *cmd == '#') {
                 continue;
-            } else if (obj.parse(cmd, args, line)) {
+            } else if (obj.parse(cmd, args, line, tmp_texture_coordinates, tmp_normal)) {
                 continue;
             }
         }

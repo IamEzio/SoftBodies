@@ -30,10 +30,7 @@ void display() {
     glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_DECAL);
 
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_BGR, GL_UNSIGNED_BYTE, texture_data);
-
     obj_.draw(false);
-
-    glDisable(GL_TEXTURE_2D);
 
     glPopMatrix();
 
@@ -70,6 +67,7 @@ void keyboard(unsigned char key, int mousex, int mousey) {
                 timer(0);
             }
             break;
+        default:;
     }
 }
 
@@ -98,17 +96,17 @@ int main(int argc, char **argv) {
         printf("Not a correct BMP file\n");
         return 1;
     }
-    unsigned int dataPos = *(int *) &(header[0x0A]);
-    unsigned int imageSize = *(int *) &(header[0x22]);
-    width = *(int *) &(header[0x12]);
-    height = *(int *) &(header[0x16]);
+    unsigned int dataPos = static_cast<unsigned int>(*(int *) &(header[0x0A]));
+    unsigned int imageSize = static_cast<unsigned int>(*(int *) &(header[0x22]));
+    width = static_cast<unsigned int>(*(int *) &(header[0x12]));
+    height = static_cast<unsigned int>(*(int *) &(header[0x16]));
     if (imageSize == 0) imageSize = width * height * 3;
     if (dataPos == 0) dataPos = 54;
     texture_data = new unsigned char[imageSize];
     fread(texture_data, imageSize, 1, file);
     fclose(file);
 
-    racgra::camera_ = {4, 3, 3};
+    racgra::camera_ = {4, -3, 3};
     racgra::near_ = 0.1;
     racgra::far_ = 100;
     racgra::fovy_ = 45;

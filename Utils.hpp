@@ -9,20 +9,6 @@
 #include <eigen3/Dense>
 #include <cfloat>
 
-struct fac {
-    std::vector<uint> vertices;
-
-    fac(uint v1, uint v2, uint v3) {
-        vertices.emplace_back(v1);
-        vertices.emplace_back(v2);
-        vertices.emplace_back(v3);
-    }
-
-    uint operator[](uint index) const {
-        return vertices[index];
-    }
-};
-
 typedef struct bound {
     GLdouble minx = DBL_MAX, maxx = DBL_MIN, miny = DBL_MAX, maxy = DBL_MIN, minz = DBL_MAX, maxz = DBL_MIN;
 } bound;
