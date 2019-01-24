@@ -3,8 +3,11 @@ project(projekt)
 set(CMAKE_CXX_STANDARD 14)
 
 set(SOURCE_FILES main.cpp
+        Physics.hpp
+        Shapes.hpp
         Object.hpp
-        Utils.hpp)
+        Utils.hpp
+        )
 
 include_directories(eigen3)
 

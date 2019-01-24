@@ -9,11 +9,6 @@
 #include <eigen3/Dense>
 #include <cfloat>
 
-typedef struct bound {
-    GLdouble minx = DBL_MAX, maxx = DBL_MIN, miny = DBL_MAX, maxy = DBL_MIN, minz = DBL_MAX, maxz = DBL_MIN;
-} bound;
-
-
 namespace racgra {
     GLuint window_;
     GLuint win_width_ = 600, win_height_ = 600, win_x_ = 100, win_y_ = 100;

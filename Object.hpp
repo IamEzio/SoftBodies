@@ -14,6 +14,8 @@
 #include <map>
 #include <cmath>
 #include "Utils.hpp"
+#include "Physics.hpp"
+#include "Shapes.hpp"
 
 using namespace Eigen;
 
@@ -54,38 +56,55 @@ private:
 
     // Loaded.
     std::vector<fac> faces_;
+    double mass_;
+    bool soft_;
     // Calculated constants.
-    bound bounds_;
     std::vector<double> init_distances_;
     // Variables.
     std::vector<Vertex> vertices_;
-
+    shapes::Cube shape;
+    // Texture data.
+    unsigned int texture_width, texture_height;
+    unsigned char *texture_data = nullptr;
 public:
-    Vector3d gravity_acc_ = {0, 0, -9.81};
-    double mass_ = 10;
-    double k = 200;
-    double k_t = 1;
 
-    Object() = default;
+    Object(double mass, bool soft = false) : mass_(mass), shape(shapes::Cube(shapes::bound())), soft_(soft) {}
 
     void draw(bool points = false) const {
+        if (texture_data) { // Set texture.
+            glEnable(GL_TEXTURE_2D);
+            glEnable(GL_DEPTH_TEST);
+            glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+            glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+            glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+            glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+            glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_DECAL);
+
+            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, texture_width, texture_height,
+                         0, GL_BGR, GL_UNSIGNED_BYTE, texture_data);
+        }
         for (const fac &f : faces_) {
-            glBegin(GL_TRIANGLES);
+            glBegin(texture_data ? GL_TRIANGLES : GL_LINE_LOOP);
             for (uint i = 0; i < 3; i++) {
                 const Vertex &v = vertices_.at(f.vertices[i]);
-                glTexCoord2d(f.texture_positions[i][0], f.texture_positions[i][1]);
+                if (texture_data) {
+                    glTexCoord2d(f.texture_positions[i][0], f.texture_positions[i][1]);
+                }
                 glVertex3d(v.position[0], v.position[1], v.position[2]);
             }
             glEnd();
-            if (points) {
-                glPointSize(7);
-                glBegin(GL_POINTS);
-                for (uint index : f.vertices) {
-                    const Vector3d &v = vertices_.at(index).position;
-                    glVertex3d(v[0], v[1], v[2]);
-                }
-                glEnd();
-            }
+//            if (points) {
+//                glPointSize(7);
+//                glBegin(GL_POINTS);
+//                for (uint index : f.vertices) {
+//                    const Vector3d &v = vertices_.at(index).position;
+//                    glVertex3d(v[0], v[1], v[2]);
+//                }
+//                glEnd();
+//            }
+        }
+        if (texture_data) {
+            glDisable(GL_TEXTURE_2D);
         }
     }
 
@@ -103,6 +122,21 @@ public:
         }
     }
 
+    void normalize() {
+        for (Vertex &v:vertices_) {
+            update_bounds(v.position);
+        }
+        Vector3d min = {shape.bounds.minx, shape.bounds.miny, shape.bounds.minz};
+        Vector3d max = {shape.bounds.maxx, shape.bounds.maxy, shape.bounds.maxz};
+        max = (max - min);
+        for (Vertex &v:vertices_) {
+            v.position = (v.position - min);
+            v.position[0] /= max[0];
+            v.position[1] /= max[1];
+            v.position[2] /= max[2];
+        }
+    }
+
 private:
     inline Vector3d getForceFor(uint v1, uint v2, double d0) const {
         Vector3d diff = vertices_[v2].position - vertices_[v1].position;
@@ -112,14 +146,14 @@ private:
 
         Vector3d velocity = vertices_[v2].velocity - vertices_[v1].velocity;
 
-        return (compression * k + diff.dot(velocity) * k_t) * diff;
+        return (compression * physics::spring_k + diff.dot(velocity) * physics::spring_kt) * diff;
     }
 
 public:
     void calculate(double dt) {
         // Set initial acceleration by gravity.
         for (Vertex &v : vertices_) {
-            v.acceleration = gravity_acc_;
+            v.acceleration = physics::g;
         }
 
         // Accumulate structural forces on vertices.
@@ -135,22 +169,66 @@ public:
         }
 
         // Apply forces to vertices.
+        shape.bounds = shapes::bound(); // Refresh rectangle bound.
         for (uint i = 0; i < vertices_.size(); i++) {
             if (!vertices_[i].movable) continue;
 
-            vertices_[i].position += dt * vertices_[i].velocity;
-            vertices_[i].velocity = 0.999 * vertices_[i].velocity + dt * vertices_[i].acceleration;
+            Vector3d &position = vertices_[i].position;
+
+            position += dt * vertices_[i].velocity;
+            vertices_[i].velocity =
+                    physics::stability_velocity_decay * vertices_[i].velocity + dt * vertices_[i].acceleration;
 
             // Force ground.
-            if (vertices_[i].position[2] < 0) {
-                vertices_[i].position[2] = 0;
-                vertices_[i].velocity[2] = 0;
+            if (position[2] < 0) {
+                position[2] = 0;
+                vertices_[i].velocity[2] *= -1 * physics::ground_rebound_speed_coef;
+            }
+
+            // Update rectangle bounds.
+            update_bounds(position);
+        }
+    }
+
+    bool isInside(const Vector3d &p, double &value, Vector3d &norm) {
+        bool t = false;
+        value = -DBL_MAX;
+        for (const fac &f : faces_) {
+            Vector3d v1 = vertices_[f[1]].position - vertices_[f[0]].position;
+            Vector3d v2 = vertices_[f[2]].position - vertices_[f[0]].position;
+            Vector3d n = v1.cross(v2);
+            double val = n.dot(p) - n.dot(vertices_[f[0]].position);
+            if (val < 0) {
+                t = true;
+                if (val > value) { // Closest face.
+                    norm = n;
+                    value = val;
+                }
+            }
+        }
+        return t;
+    }
+
+    void collide(Object &o) {
+        if (!shapes::isCollision(shape, o.shape)) return;  // Fast filter.
+
+        std::cout << "Collision!" << std::endl;
+
+        // Invert speeds for colliding vertices.
+        for (Vertex &v : o.vertices_) {
+            if (shape.bounds.inside(v.position)) {  // Filter unwanted vertices.
+                double val; // Amount inside (negative value)
+                Vector3d n; // Normal (direction for correction).
+                if (isInside(v.position, val, n)) { // Check if truly inside the object.
+                    v.position += std::abs(n.dot(v.position)) * n / n.norm(); // Backtrack the distance.
+                    v.velocity *= -physics::object_rebound_coef;
+                }
             }
         }
     }
 
-    const bound &get_bounds() const {
-        return bounds_;
+    const shapes::Shape &getShape() const {
+        return shape;
     }
 
 private:
@@ -168,9 +246,13 @@ private:
         }
     }
 
-    inline void update_bound(double val, double &container, bool min) {
-        if (min && val < container || !min && val > container)
-            container = val;
+    inline void update_bounds(Vector3d val) {
+        if (val[0] < shape.bounds.minx) shape.bounds.minx = val[0];
+        if (val[0] > shape.bounds.maxx) shape.bounds.maxx = val[0];
+        if (val[1] < shape.bounds.miny) shape.bounds.miny = val[1];
+        if (val[1] > shape.bounds.maxy) shape.bounds.maxy = val[1];
+        if (val[2] < shape.bounds.minz) shape.bounds.minz = val[2];
+        if (val[2] > shape.bounds.maxz) shape.bounds.maxz = val[2];
     }
 
     inline bool parse(const char *cmd, char *args, ulong line,
@@ -179,13 +261,6 @@ private:
             double x, y, z;
             if (!sscanf(args, "%lf %lf %lf", &x, &y, &z))
                 throw std::runtime_error("Error reading vertex on line " + std::to_string(line));
-            // Update bounds.
-            update_bound(x, bounds_.minx, true);
-            update_bound(x, bounds_.maxx, false);
-            update_bound(y, bounds_.miny, true);
-            update_bound(y, bounds_.maxy, false);
-            update_bound(z, bounds_.minz, true);
-            update_bound(z, bounds_.maxz, false);
             vertices_.emplace_back(Vector3d(x, y, z));
             return true;
 
@@ -258,11 +333,11 @@ private:
     }
 
 public:
-    static Object load(std::string &filepath) {
-        FILE *f = fopen(filepath.data(), "r");
+    void load(const char *filepath) {
+        FILE *f = fopen(filepath, "r");
         if (!f)
-            throw std::runtime_error("Cannot open file: " + filepath);
-        Object obj;
+            throw std::runtime_error("Cannot open file: " + std::string(filepath));
+
         std::vector<Vector2d> tmp_texture_coordinates;
         std::vector<Vector3d> tmp_normal;
         uint line = 0;
@@ -276,13 +351,40 @@ public:
 
             if (res < 2 || *cmd == '#') {
                 continue;
-            } else if (obj.parse(cmd, args, line, tmp_texture_coordinates, tmp_normal)) {
+            } else if (parse(cmd, args, line, tmp_texture_coordinates, tmp_normal)) {
                 continue;
             }
         }
         fclose(f);
-        obj.initialize();
-        return obj;
+        initialize();
+    }
+
+    void load(std::string &filepath) {
+        load(filepath.c_str());
+    }
+
+    int loadTexture(const char *texture_file) {
+        FILE *file = fopen(texture_file, "rb");
+        unsigned char header[54];
+        if (!file) {
+            std::cout << "Image could not be opened! " << texture_file << std::endl;
+            return 1;
+        } else if (fread(header, 1, 54, file) != 54) { // If not 54 bytes read : problem
+            printf("Not a correct BMP file\n");
+            return 1;
+        } else if (header[0] != 'B' || header[1] != 'M') {
+            printf("Not a correct BMP file\n");
+            return 1;
+        }
+        texture_width = static_cast<unsigned int>(*(int *) &(header[0x12]));
+        texture_height = static_cast<unsigned int>(*(int *) &(header[0x16]));
+        unsigned int dataPos = static_cast<unsigned int>(*(int *) &(header[0x0A]));
+        unsigned int imageSize = static_cast<unsigned int>(*(int *) &(header[0x22]));
+        if (imageSize == 0) imageSize = texture_width * texture_height * 3;
+        if (dataPos == 0) dataPos = 54;
+        texture_data = new unsigned char[imageSize];
+        fread(texture_data, imageSize, 1, file);
+        fclose(file);
     }
 };
 
