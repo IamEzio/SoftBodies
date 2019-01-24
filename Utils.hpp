@@ -136,10 +136,10 @@ namespace racgra {
     void mouse_wheel(int button, int dir, int x, int y) {
         switch (button) {
             case GLUT_LEFT_BUTTON:
-                angle_ -= amount_;
+                angle_ -= amount_ * 2;
                 break;
             case GLUT_RIGHT_BUTTON:
-                angle_ += amount_;
+                angle_ += amount_ * 2;
                 break;
             case 3:
                 zoom(true, amount_);

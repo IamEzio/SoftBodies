@@ -26,3 +26,29 @@ grb 0.9                                                                 # Ground
 orb 1e-6                                                                # Global object rebound coef
 
 ```
+
+# Simulator controls
+| Key | Action |
+| --- | --- |
+| space | play/pause the simulation |
+| + | increase gravity by 0.1 |
+| - | decrease gravity by 0.1 |
+| + | increase gravity by 0.1 |
+| a | move camera on x by +1 |
+| d | move camera on x by -1 |
+| q | move camera on y by +1 |
+| e | move camera on y by -1 |
+| w | move camera on z by +1 |
+| s | move camera on z by -1 |
+| o | increase fovy by 10 |
+| u | decrease fovy by 10 |
+| i | zoom in toward center |
+| k | zoom out from center |
+| j | rotate left around center |
+| l | rotate right around center |
+| x | toggle forcing the wire model |
+| mouse_left_key | rotate left around center |
+| mouse_right_key | rotate right around center |
+| mouse_scroll_up | zoom in toward center |
+| mouse_scroll_down | zoom out from center |
+

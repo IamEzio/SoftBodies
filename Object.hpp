@@ -89,7 +89,7 @@ public:
                          0, GL_BGR, GL_UNSIGNED_BYTE, texture_data);
         }
         for (const fac &f : faces_) {
-            glBegin(texture_data ? GL_TRIANGLES : GL_LINE_LOOP);
+            glBegin((texture_data && racgra::wire_) ? GL_TRIANGLES : GL_LINE_LOOP);
             for (uint i = 0; i < 3; i++) {
                 const Vertex &v = vertices_.at(f.vertices[i]);
                 if (texture_data) {
@@ -151,7 +151,7 @@ private:
 
         Vector3d velocity = vertices_[v2].velocity - vertices_[v1].velocity;
 
-        return (compression * k_+ diff.dot(velocity) * kt_) * diff;
+        return (compression * k_ + diff.dot(velocity) * kt_) * diff;
     }
 
 public:

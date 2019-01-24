@@ -6,8 +6,8 @@ o 10.0 0.0 1.5 10.0 ../res/objects/cube.obj _
 rms 50                                                                  # Refresh rate
 eul 10                                                                  # Euler iterations between draws
 
-g 0.0 0.0 -5.0                                                          # Gravity vector
-k 100                                                                    # Spring constant
+g 0.0 0.0 -2.0                                                          # Gravity vector
+k 200                                                                    # Spring constant
 kt 30                                                                    # Spring velocity decay
 grb 0.9999                                                              # Ground rebound coef
 orb 1e-6                                                                # Object rebound coef
