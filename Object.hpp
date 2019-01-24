@@ -76,7 +76,7 @@ public:
     }
 
     void draw(bool points = false) const {
-        if (texture_data) { // Set texture.
+        if (texture_data && !racgra::wire_) { // Set texture.
             glEnable(GL_TEXTURE_2D);
             glEnable(GL_DEPTH_TEST);
             glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
@@ -89,7 +89,7 @@ public:
                          0, GL_BGR, GL_UNSIGNED_BYTE, texture_data);
         }
         for (const fac &f : faces_) {
-            glBegin((texture_data && racgra::wire_) ? GL_TRIANGLES : GL_LINE_LOOP);
+            glBegin((texture_data && !racgra::wire_) ? GL_TRIANGLES : GL_LINE_LOOP);
             for (uint i = 0; i < 3; i++) {
                 const Vertex &v = vertices_.at(f.vertices[i]);
                 if (texture_data) {
@@ -98,17 +98,8 @@ public:
                 glVertex3d(v.position[0], v.position[1], v.position[2]);
             }
             glEnd();
-//            if (points) {
-//                glPointSize(7);
-//                glBegin(GL_POINTS);
-//                for (uint index : f.vertices) {
-//                    const Vector3d &v = vertices_.at(index).position;
-//                    glVertex3d(v[0], v[1], v[2]);
-//                }
-//                glEnd();
-//            }
         }
-        if (texture_data) {
+        if (texture_data && !racgra::wire_) {
             glDisable(GL_TEXTURE_2D);
         }
     }
@@ -186,6 +177,8 @@ public:
             // Force ground.
             if (position[2] < 0) {
                 position[2] = 0;
+                vertices_[i].velocity[0] *= 0.9;
+                vertices_[i].velocity[1] *= 0.9;
                 vertices_[i].velocity[2] *= -1 * physics::ground_rebound_speed_coef;
             }
 

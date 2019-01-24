@@ -33,7 +33,6 @@ orb 1e-6                                                                # Global
 | space | play/pause the simulation |
 | + | increase gravity by 0.1 |
 | - | decrease gravity by 0.1 |
-| + | increase gravity by 0.1 |
 | a | move camera on x by +1 |
 | d | move camera on x by -1 |
 | q | move camera on y by +1 |

@@ -18,7 +18,7 @@ namespace racgra {
     double angle_ = 0;
     double fovy_ = 1.0;
     GLdouble near_ = 0.5, far_ = 20.0;
-    bool wire_ = true;
+    bool wire_ = false;
     double amount_ = 1;
 
     void reshape(int w, int h) {

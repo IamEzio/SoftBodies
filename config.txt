@@ -1,13 +1,13 @@
 # mass x y z model_file texture_file
-o 10.0 0.0 0.0 4.0 ../res/objects/cube.obj ../res/textures/anfis.bmp    # Define objects and their parameters
-o 10.0 1.5 0.0 2.0 ../res/objects/pyramid.obj ../res/textures/cat.bmp   # (texutre is optional, but leave an '_')
-o 10.0 0.0 1.5 10.0 ../res/objects/cube.obj _
+o 10.0 0.0 0.0 1.0 ../res/objects/cube.obj ../res/textures/anfis.bmp    # Define objects and their parameters
+o 10.0 0.0 0.5 3.0 ../res/objects/pyramid.obj ../res/textures/cat.bmp   # (texutre is optional, but leave an '_')
+o 10.0 0.0 2.5 10.0 ../res/objects/cube.obj _
 
 rms 50                                                                  # Refresh rate
 eul 10                                                                  # Euler iterations between draws
 
 g 0.0 0.0 -2.0                                                          # Gravity vector
-k 200                                                                   # Spring constant
-kt 40                                                                   # Spring velocity decay
-grb 0.9                                                              # Ground rebound coef
+k 300                                                                   # Spring constant
+kt 50                                                                   # Spring velocity decay
+grb 0.9                                                                 # Ground rebound coef
 orb 1e-6                                                                # Object rebound coef
