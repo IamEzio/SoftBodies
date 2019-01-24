@@ -57,6 +57,8 @@ private:
     // Loaded.
     std::vector<fac> faces_;
     double mass_;
+    double k_;
+    double kt_;
     bool soft_;
     // Calculated constants.
     std::vector<double> init_distances_;
@@ -68,7 +70,10 @@ private:
     unsigned char *texture_data = nullptr;
 public:
 
-    Object(double mass, bool soft = false) : mass_(mass), shape(shapes::Cube(shapes::bound())), soft_(soft) {}
+    Object(double mass, bool soft = true) : mass_(mass), shape(shapes::Cube(shapes::bound())), soft_(soft) {
+        k_ = physics::spring_k;
+        kt_ = physics::spring_kt;
+    }
 
     void draw(bool points = false) const {
         if (texture_data) { // Set texture.
@@ -146,7 +151,7 @@ private:
 
         Vector3d velocity = vertices_[v2].velocity - vertices_[v1].velocity;
 
-        return (compression * physics::spring_k + diff.dot(velocity) * physics::spring_kt) * diff;
+        return (compression * k_+ diff.dot(velocity) * kt_) * diff;
     }
 
 public:
