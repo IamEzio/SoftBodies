@@ -16,7 +16,7 @@ o 10.0 0.0 0.0 1.0 ../res/objects/cube.obj ../res/textures/anfis.bmp    # Define
 o 10.0 2.0 0.0 4.0 ../res/objects/pyramid.obj ../res/textures/cat.bmp   # (texutre is optional, but leave an '_')
 o 10.0 0.1 2.0 3.0 ../res/objects/cloth.obj
 
-rms 50                                                                  # Refresh rate
+rms 50                                                                  # Refresh rate (ms)
 eul 10                                                                  # Euler iterations between draws
 
 g 0.0 0.0 -5.0                                                          # Gravity vector
