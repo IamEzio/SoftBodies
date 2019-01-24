@@ -190,7 +190,7 @@ public:
         }
     }
 
-    bool isInside(const Vector3d &p, double &value, Vector3d &norm) {
+    bool isInside(const Vector3d &p, double &value, Vector3d &norm, Vector3d &v) {
         bool t = false;
         value = -DBL_MAX;
         for (const fac &f : faces_) {
@@ -203,6 +203,7 @@ public:
                 if (val > value) { // Closest face.
                     norm = n;
                     value = val;
+                    v = vertices_[f[0]].position;
                 }
             }
         }
@@ -212,15 +213,15 @@ public:
     void collide(Object &o) {
         if (!shapes::isCollision(shape, o.shape)) return;  // Fast filter.
 
-        std::cout << "Collision!" << std::endl;
-
         // Invert speeds for colliding vertices.
         for (Vertex &v : o.vertices_) {
             if (shape.bounds.inside(v.position)) {  // Filter unwanted vertices.
                 double val; // Amount inside (negative value)
                 Vector3d n; // Normal (direction for correction).
-                if (isInside(v.position, val, n)) { // Check if truly inside the object.
-                    v.position += std::abs(n.dot(v.position)) * n / n.norm(); // Backtrack the distance.
+                Vector3d v1;
+                if (isInside(v.position, val, n, v1)) { // Check if truly inside the object.
+                    std::cout << "Collision!" << std::endl;
+                    v.position += std::abs(n.dot(v.position - v1)) * n / n.norm(); // Backtrack the distance.
                     v.velocity *= -physics::object_rebound_coef;
                 }
             }

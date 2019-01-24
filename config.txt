@@ -1,13 +1,15 @@
 # mass x y z model_file texture_file
 o 10.0 0.0 0.0 1.0 ../res/objects/cube.obj _
-o 10.0 0.5 0.5 4.0 ../res/objects/pyramid.obj ../res/textures/cat.bmp
+o 10.0 2.0 0.0 4.0 ../res/objects/pyramid.obj ../res/textures/cat.bmp
+o 10.0 0.1 0.5 3.0 ../res/objects/cloth.obj ../res/textures/cat.bmp
+o 10.0 2.0 2.0 5.0 ../res/objects/cube.obj ../res/textures/cat.bmp
 
 rms 20
 eul 10
 
-g 0.0 0.0 -1.0
-k 40
-kt 3
+g 0.0 0.0 -5.0
+k 100
+kt 10
 vdec 0.999
 grb 0.9
-orb 0.000001
+orb 1e-6
