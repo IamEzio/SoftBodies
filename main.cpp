@@ -33,7 +33,7 @@ void timer(int ignore) {
     // Euler integrate objects.
     for (uint i = 0; i < physics::euler_iterations; i++) {
         for (Object &o : objects_) {
-            o.calculate(physics::dt);
+            o.calculate(physics::refresh_ms / 1000. / physics::euler_iterations);
         }
         for (uint i = 0; i < objects_.size(); i++) {
             for (uint j = 0; j < objects_.size(); j++) {

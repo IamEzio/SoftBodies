@@ -13,8 +13,6 @@ using namespace Eigen;
 namespace physics {
     static uint refresh_ms = 20u;
     static uint euler_iterations = 10;
-    static double dt = refresh_ms / 1000. / euler_iterations;
-
 
     static Vector3d g = {0, 0, -1};
 

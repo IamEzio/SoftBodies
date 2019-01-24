@@ -7,7 +7,7 @@ rms 50                                                                  # Refres
 eul 10                                                                  # Euler iterations between draws
 
 g 0.0 0.0 -2.0                                                          # Gravity vector
-k 200                                                                    # Spring constant
-kt 30                                                                    # Spring velocity decay
-grb 0.9999                                                              # Ground rebound coef
+k 200                                                                   # Spring constant
+kt 40                                                                   # Spring velocity decay
+grb 0.9                                                              # Ground rebound coef
 orb 1e-6                                                                # Object rebound coef

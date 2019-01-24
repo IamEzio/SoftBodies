@@ -6,8 +6,7 @@ set(SOURCE_FILES main.cpp
         Physics.hpp
         Shapes.hpp
         Object.hpp
-        Utils.hpp
-        )
+        Utils.hpp)
 
 include_directories(eigen3)
 
