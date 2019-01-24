@@ -21,7 +21,6 @@ namespace physics {
     static double spring_k = 40;
     static double spring_kt = 3;
 
-    static double stability_velocity_decay = 0.999;
     static double ground_rebound_speed_coef = 0.9;
     static double object_rebound_coef = 1e-6;
 };

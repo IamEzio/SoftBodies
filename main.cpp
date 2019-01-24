@@ -109,8 +109,9 @@ int main(int argc, char **argv) {
                     throw std::runtime_error("Error reading object on line " + std::to_string(line));
                 Object o(mass);
                 o.load(model_file);
+                o.normalize();
                 o.move({x, y, z});
-                if (read > 5) {
+                if (std::strcmp(texture_file, "_") != 0) {
                     o.loadTexture(texture_file);
                 }
                 objects_.push_back(o);
@@ -124,8 +125,6 @@ int main(int argc, char **argv) {
                 physics::spring_k = std::stod(args);
             } else if (std::strcmp(cmd, "kt") == 0) {
                 physics::spring_kt = std::stod(args);
-            } else if (std::strcmp(cmd, "vdec") == 0) {
-                physics::stability_velocity_decay = std::stod(args);
             } else if (std::strcmp(cmd, "grb") == 0) {
                 physics::ground_rebound_speed_coef = std::stod(args);
             } else if (std::strcmp(cmd, "orb") == 0) {
@@ -140,7 +139,7 @@ int main(int argc, char **argv) {
     glutInitWindowSize(1024, 756);
     glutInitWindowPosition(100, 100);
 
-    racgra::camera_ = {4, -3, 3};
+    racgra::camera_ = {4, 4, 4};
     racgra::near_ = 0.1;
     racgra::far_ = 100;
     racgra::fovy_ = 45;
