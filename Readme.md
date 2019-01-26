@@ -59,4 +59,5 @@ This project was a part of the [Computer Graphics](https://www.fer.unizg.hr/en/c
 [FER](https://www.fer.unizg.hr/en).
 
 # More
-To see my lab projects from this course, visit [CG_labs](https://github.com/lirfu/CG_labs).
+To see my lab projects from this course, update your submodules with `git submodule update --init` or just visit 
+[CG_labs](https://github.com/lirfu/CG_labs) directly.
