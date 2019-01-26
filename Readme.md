@@ -1,4 +1,6 @@
 # Soft body simulator
+![Example image](res/example.png)
+
 This project simulates soft bodies under a uniform external force (gravity).
 
 # Compile
@@ -51,3 +53,7 @@ orb 1e-6                                                                # Global
 | mouse_scroll_up | zoom in toward center |
 | mouse_scroll_down | zoom out from center |
 
+# Acknowledgements
+
+The lab assignments were a part of the [Computer Graphics](https://www.fer.unizg.hr/en/course/comgra_a) course at 
+[FER](https://www.fer.unizg.hr/en).
