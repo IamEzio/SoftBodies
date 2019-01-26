@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.8)
-project(projekt)
+project(soft_body_sim)
 set(CMAKE_CXX_STANDARD 14)
 
 set(SOURCE_FILES main.cpp
@@ -10,6 +10,6 @@ set(SOURCE_FILES main.cpp
 
 include_directories(eigen3)
 
-add_executable(projekt ${SOURCE_FILES})
+add_executable(soft_body_sim ${SOURCE_FILES})
 
-target_link_libraries(projekt GLU GL glut)
+target_link_libraries(soft_body_sim GLU GL glut)
