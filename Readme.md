@@ -51,9 +51,12 @@ orb 1e-6                                                                # Global
 | mouse_left_key | rotate left around center |
 | mouse_right_key | rotate right around center |
 | mouse_scroll_up | zoom in toward center |
-| mouse_scroll_down | zoom out from center |
+| mouse_scroll_down | zoom out from center | 
 
 # Acknowledgements
 
-The lab assignments were a part of the [Computer Graphics](https://www.fer.unizg.hr/en/course/comgra_a) course at 
+This project was a part of the [Computer Graphics](https://www.fer.unizg.hr/en/course/comgra_a) course at 
 [FER](https://www.fer.unizg.hr/en).
+
+# More
+To see my lab projects from this course, visit [CG_labs](https://github.com/lirfu/CG_labs).
