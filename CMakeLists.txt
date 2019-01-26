@@ -2,11 +2,11 @@ cmake_minimum_required(VERSION 3.8)
 project(soft_body_sim)
 set(CMAKE_CXX_STANDARD 14)
 
-set(SOURCE_FILES main.cpp
-        Physics.hpp
-        Shapes.hpp
-        Object.hpp
-        Utils.hpp)
+set(SOURCE_FILES src/main.cpp
+        src/Physics.hpp
+        src/Shapes.hpp
+        src/Object.hpp
+        src/Utils.hpp)
 
 include_directories(eigen3)
 
