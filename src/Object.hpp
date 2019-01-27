@@ -171,15 +171,14 @@ public:
 
             Vector3d &position = vertices_[i].position;
 
-            position += dt * vertices_[i].velocity;
             vertices_[i].velocity = vertices_[i].velocity + dt * vertices_[i].acceleration;
+            position += dt * (vertices_[i].velocity + 0.5 * dt * vertices_[i].acceleration);
 
             // Force ground.
             if (position[2] < 0) {
                 position[2] = 0;
-                vertices_[i].velocity[0] *= 0.9;
-                vertices_[i].velocity[1] *= 0.9;
-                vertices_[i].velocity[2] *= -1 * physics::ground_rebound_speed_coef;
+                vertices_[i].velocity *= physics::ground_rebound_speed_coef;
+                vertices_[i].velocity[2] *= -1;
             }
 
             // Update rectangle bounds.
@@ -219,7 +218,7 @@ public:
                 if (isInside(v.position, val, n, v1)) { // Check if truly inside the object.
                     std::cout << "Collision!" << std::endl;
                     v.position += std::abs(n.dot(v.position - v1)) * n / n.norm(); // Backtrack the distance.
-                    v.velocity *= -physics::object_rebound_coef;
+                    v.velocity = physics::object_rebound_coef * v.velocity.norm() * n;
                 }
             }
         }
