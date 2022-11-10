@@ -140,7 +140,7 @@ int main(int argc, char **argv) {
     glutInitWindowSize(1024, 756);
     glutInitWindowPosition(100, 100);
 
-    racgra::camera_ = {4, 4, 4};
+    racgra::camera_ = {8, 8, 4};
     racgra::near_ = 0.1;
     racgra::far_ = 100;
     racgra::fovy_ = 45;

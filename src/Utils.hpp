@@ -8,7 +8,7 @@
 namespace racgra {
     GLuint window_;
     GLuint win_width_ = 600, win_height_ = 600, win_x_ = 100, win_y_ = 100;
-    Eigen::Vector3d camera_(1.0, 1.2, 1.4);
+    Eigen::Vector3d camera_(1.0, 0.0, 0.0);
     Eigen::Vector3d lookat_(0.0, 0.0, 0.0);
     Eigen::Vector3d lookup_(0.0, 0.0, 1.0);
     double angle_ = 0;
@@ -53,6 +53,7 @@ namespace racgra {
         in ? camera_ += v : camera_ -= v;
     }
 
+    // draws x, y and z axes in different colors
     void draw_origin() {
         glPushMatrix();
         glLoadIdentity();
@@ -78,26 +79,32 @@ namespace racgra {
     void camera_control(char c, double amount) {
         switch (c) {
             // Z-axis
-            case 'w':
+            case 'r':
                 camera_[2] += amount;
+                // lookat_[2] += amount;
                 break;
-            case 's':
+            case 'f':
                 camera_[2] -= amount;
+                // lookat_[2] -= amount;
                 break;
                 // X-axis
-            case 'a':
-                camera_[0] += amount;
-                break;
-            case 'd':
-                camera_[0] -= amount;
-                break;
+            // case 'a':
+                // camera_[0] += amount;
+                // lookat_[0] += amount;
+                // break;
+            // case 'd':
+                // camera_[0] -= amount;
+                // lookat_[0] -= amount;
+                // break;
                 // Y-axis
-            case 'q':
-                camera_[1] += amount;
-                break;
-            case 'e':
-                camera_[1] -= amount;
-                break;
+            // case 'q':
+            //     camera_[1] += amount;
+            //     lookat_[1] += amount;
+            //     break;
+            // case 'e':
+            //     camera_[1] -= amount;
+            //     camera_[1] -= amount;
+            //     break;
                 // FOVY
             case 'u':
                 fovy_ -= 10 * amount;
@@ -106,18 +113,22 @@ namespace racgra {
                 fovy_ += 10 * amount;
                 break;
                 // Center zoom
-            case 'k':
+            // case 'k':
+            case 's':
                 zoom(false, amount_);
                 break;
-            case 'i':
+            // case 'i':
+            case 'w':
                 zoom(true, amount_);
                 break;
                 // Rotate around center.
-            case 'l':
-                angle_ += amount;
+            // case 'l':
+            case 'd':
+                angle_ += 5;
                 break;
-            case 'j':
-                angle_ -= amount;
+            // case 'j':
+            case 'a':
+                angle_ -= 5;
                 break;
                 // Wire or some polygon view.
             case 'x':

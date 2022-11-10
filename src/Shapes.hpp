@@ -7,10 +7,9 @@
 #include <Eigen/Dense>
 
 namespace shapes {
-//    enum CollisionType {
-//        NONE, xyz, xyZ, xYz, xYZ, Xyz, XyZ, XYz, XYZ
-//    };
 
+    // bound contains the bounding cube of the object
+    // functions to check if something lies in the bounding cube of the object
     struct bound {
         double minx, maxx, miny, maxy, minz, maxz;
 
@@ -19,14 +18,17 @@ namespace shapes {
             maxx = maxy = maxz = -DBL_MAX;
         }
 
+        // returns true if point (x,y,z) lies inside bounding cube
         bool inside(double x, double y, double z) const {
             return x >= minx && x <= maxx && y >= miny && y <= maxy && z >= minz && z <= maxz;
         }
 
+        // returns true if Eigen::Vector3d lies inside bounding cube
         bool inside(const Eigen::Vector3d &v) const {
             return v[0] >= minx && v[0] <= maxx && v[1] >= miny && v[1] <= maxy && v[2] >= minz && v[2] <= maxz;
         }
 
+        // returns true if any corner of bounding cube b lies inside this bounding cube
         bool inside(const bound &b) {
             return inside(b.minx, b.miny, b.minz)
                    || inside(b.minx, b.miny, b.maxz)
@@ -49,46 +51,11 @@ namespace shapes {
         Cube(bound b) : bounds(b) {}
     };
 
-//    struct Orb : public Shape {
-//        double radius;
-//        Eigen::Vector3d center;
-//
-//        Orb(double radius, Eigen::Vector3d center) : radius(radius), center(center) {}
-//    };
 
     static bool isCollision(Cube &c1, Cube &c2) {
         return c1.bounds.inside(c2.bounds);
     }
 
-//    static bool isCollision(Orb &o1, Orb &o2) {
-//        return (o1.center - o2.center).norm() < std::min(o1.radius, o2.radius);
-//    }
-//
-//    static bool isCollision(Orb &o, Cube &c) {
-//        const bound &b = c.bounds;
-//        Eigen::Vector3d v;
-//        v = {b.minx, b.miny, b.minz};
-//        if ((o.center - v).norm() < o.radius) return true;
-//        v = {b.minx, b.miny, b.maxz};
-//        if ((o.center - v).norm() < o.radius) return true;
-//        v = {b.minx, b.maxy, b.minz};
-//        if ((o.center - v).norm() < o.radius) return true;
-//        v = {b.minx, b.maxy, b.maxz};
-//        if ((o.center - v).norm() < o.radius) return true;
-//        v = {b.maxx, b.miny, b.minz};
-//        if ((o.center - v).norm() < o.radius) return true;
-//        v = {b.maxx, b.miny, b.maxz};
-//        if ((o.center - v).norm() < o.radius) return true;
-//        v = {b.maxx, b.maxy, b.minz};
-//        if ((o.center - v).norm() < o.radius) return true;
-//        v = {b.maxx, b.maxy, b.maxz};
-//        if ((o.center - v).norm() < o.radius) return true;
-//        return true;
-//    }
-//
-//    static bool isCollision(Cube &c, Orb &o) {
-//        return isCollision(o, c);
-//    }
 };
 
 
