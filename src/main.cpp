@@ -71,6 +71,7 @@ void keyboard(unsigned char key, int mousex, int mousey) {
 }
 
 int main(int argc, char **argv) {
+    // OPENING CONFIG FILE
     if (argc != 2) {
         std::cerr << "Please provide a config file!" << std::endl;
         std::cerr << "Usage: projekt <config_file>" << std::endl;

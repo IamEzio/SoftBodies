@@ -1,13 +1,9 @@
-//
-// Created by lirfu on 18.01.19..
-//
-
 #ifndef PROJEKT_UTILS_HPP
 #define PROJEKT_UTILS_HPP
 
-#import <GL/glut.h>
-#include <eigen3/Dense>
+#include <GL/glut.h>
 #include <cfloat>
+#include <Eigen/Dense>
 
 namespace racgra {
     GLuint window_;

@@ -1,7 +1,3 @@
-//
-// Created by lirfu on 20.01.19..
-//
-
 #ifndef PROJEKT_OBJECT_HPP
 #define PROJEKT_OBJECT_HPP
 

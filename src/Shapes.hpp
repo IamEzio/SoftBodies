@@ -1,14 +1,10 @@
-//
-// Created by lirfu on 23.01.19..
-//
-
 #ifndef PROJEKT_SHAPES_HPP
 #define PROJEKT_SHAPES_HPP
 
 
 #include <algorithm>
-#include <eigen3/Dense>
 #include <cfloat>
+#include <Eigen/Dense>
 
 namespace shapes {
 //    enum CollisionType {

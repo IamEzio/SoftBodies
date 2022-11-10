@@ -1,12 +1,9 @@
-//
-// Created by lirfu on 23.01.19..
-//
-
 #ifndef PROJEKT_PHYSICS_HPP
 #define PROJEKT_PHYSICS_HPP
 
-#include <eigen3/Dense>
+#include <Eigen/Dense>
 #include "Object.hpp"
+// #include "Eigen/Dense"
 
 using namespace Eigen;
 
