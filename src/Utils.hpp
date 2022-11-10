@@ -25,7 +25,7 @@ namespace racgra {
         glMatrixMode(GL_PROJECTION);
         glLoadIdentity();
         glClearColor(0.89f, 0.87f, 0.86f, 1.0f);
-        glClear(GL_COLOR_BUFFER_BIT);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         gluPerspective(fovy_, (float) win_width_ / win_height_, near_, far_);
         gluLookAt(camera_[0], camera_[1], camera_[2],

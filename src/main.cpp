@@ -136,7 +136,7 @@ int main(int argc, char **argv) {
     }
 
     glutInit(&argc, argv);
-    glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE); // Double buffer
+    glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE | GLUT_DEPTH); // Double buffer
     glutInitWindowSize(1024, 756);
     glutInitWindowPosition(100, 100);
 
