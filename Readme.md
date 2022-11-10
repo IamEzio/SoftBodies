@@ -29,7 +29,18 @@ orb 1e-6                                                                # Global
 
 ```
 
-# Simulator controls
+
+# New movement controls
+| Key | Action |
+| --- | --- |
+| w | move towards origin |
+| s | move away from origin |
+| a | rotate left |
+| d | rotate right |
+| r | move viewing angle to top |
+| f | move viewing angle to bottom |
+
+# Old controls (comment out)
 | Key | Action |
 | --- | --- |
 | space | play/pause the simulation |
