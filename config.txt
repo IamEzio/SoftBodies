@@ -1,13 +1,13 @@
-# mass x y z model_file texture_file
-o 10.0 0.0 0.0 3.0 ../res/objects/cube.obj ../res/textures/redjelly.bmp    # Define objects and their parameters
-# o 10.0 1.5 0.0 0.0 ../res/objects/pyramid.obj ../res/textures/rubiks.bmp # (texutre is optional, but leave an '_')
-o 3.0 0.0 0.0 5.0 ../res/objects/cube.obj ../res/textures/bluejelly.bmp
-
 rms 50                                                                  # Refresh rate
 eul 10                                                                  # Euler iterations between draws
 
 g 0.0 0.0 -2.0                                                          # Gravity vector
-k 300                                                                   # Spring constant
-kt 50                                                                   # Spring velocity decay
+k 40                                                                   # Spring constant
+kt 3                                                                   # Spring velocity decay
 grb 0.9                                                                 # Ground rebound coef
 orb 0.9                                                                # Object rebound coef
+
+# mass x y z model_file texture_file
+o 10.0 0.0 0.0 5.0 ../res/objects/cube.obj ../res/textures/rubiks.bmp    # Define objects and their parameters
+# o 10.0 1.5 0.0 0.0 ../res/objects/pyramid.obj ../res/textures/rubiks.bmp # (texutre is optional, but leave an '_')
+# o 3.0 0.0 0.0 5.0 ../res/objects/cube.obj ../res/textures/rubiks.bmp
