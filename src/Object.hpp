@@ -213,7 +213,6 @@ public:
                 Vector3d n; // Normal (direction for correction).
                 Vector3d v1;
                 if (isInside(v.position, val, n, v1)) { // Check if truly inside the object.
-                    std::cout << "Collision!" << std::endl;
                     v.position += std::abs(n.dot(v.position - v1)) * n / n.norm(); // Backtrack the distance.
                     v.velocity = physics::object_rebound_coef * v.velocity.norm() * n;
                 }
