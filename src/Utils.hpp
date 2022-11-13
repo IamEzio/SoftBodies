@@ -53,7 +53,7 @@ namespace racgra {
         in ? camera_ += v : camera_ -= v;
     }
 
-    // draws x, y and z axes in different colors
+    // draws x, y and z axes in different colors and floor
     void draw_origin() {
         glPushMatrix();
         glLoadIdentity();
@@ -74,6 +74,14 @@ namespace racgra {
         glEnd();
         glLineWidth(1);
         glPopMatrix();
+
+        glBegin(GL_QUADS);
+        glColor3d(0.7,0.7,0.7);
+        glVertex3d(8,8,0);
+        glVertex3d(8,-8,0);
+        glVertex3d(-8,-8,0);
+        glVertex3d(-8,8,0);
+        glEnd();
     }
 
     void camera_control(char c, double amount) {
