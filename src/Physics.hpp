@@ -1,5 +1,5 @@
-#ifndef PROJEKT_PHYSICS_HPP
-#define PROJEKT_PHYSICS_HPP
+#ifndef PROJECT_PHYSICS_HPP
+#define PROJECT_PHYSICS_HPP
 
 #include <Eigen/Dense>
 #include "Object.hpp"
@@ -23,4 +23,4 @@ namespace physics {
 };
 
 
-#endif //PROJEKT_PHYSICS_HPP
+#endif //PROJECT_PHYSICS_HPP

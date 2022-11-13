@@ -1,5 +1,5 @@
-#ifndef PROJEKT_SHAPES_HPP
-#define PROJEKT_SHAPES_HPP
+#ifndef PROJECT_SHAPES_HPP
+#define PROJECT_SHAPES_HPP
 
 
 #include <algorithm>
@@ -59,4 +59,4 @@ namespace shapes {
 };
 
 
-#endif //PROJEKT_SHAPES_HPP
+#endif //PROJECT_SHAPES_HPP

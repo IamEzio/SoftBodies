@@ -1,11 +1,11 @@
-#ifndef PROJEKT_UTILS_HPP
-#define PROJEKT_UTILS_HPP
+#ifndef PROJECT_UTILS_HPP
+#define PROJECT_UTILS_HPP
 
 #include <GL/glut.h>
 #include <cfloat>
 #include <Eigen/Dense>
 
-namespace racgra {
+namespace utility {
     GLuint window_;
     GLuint win_width_ = 600, win_height_ = 600, win_x_ = 100, win_y_ = 100;
     Eigen::Vector3d camera_(1.0, 0.0, 0.0);
@@ -75,6 +75,7 @@ namespace racgra {
         glLineWidth(1);
         glPopMatrix();
 
+        // Floor
         glBegin(GL_QUADS);
         glColor3d(0.7,0.7,0.7);
         glVertex3d(8,8,0);
@@ -98,9 +99,6 @@ namespace racgra {
             case 's':
                 camera_[2] -= amount;
                 break;
-            case 'z':
-                zoom(false, amount_);
-                break;
             case 'x':
                 wire_ = !wire_;
                 break;
@@ -112,12 +110,6 @@ namespace racgra {
 
     void mouse_wheel(int button, int dir, int x, int y) {
         switch (button) {
-            case GLUT_LEFT_BUTTON:
-                angle_ -= amount_ * 2;
-                break;
-            case GLUT_RIGHT_BUTTON:
-                angle_ += amount_ * 2;
-                break;
             case 3:
                 zoom(true, amount_);
                 break;
@@ -130,4 +122,4 @@ namespace racgra {
 };
 
 
-#endif //PROJEKT_UTILS_HPP
+#endif //PROJECT_UTILS_HPP

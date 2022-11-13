@@ -14,7 +14,7 @@ void display()
     glMatrixMode(GL_MODELVIEW);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    racgra::draw_origin();
+    utility::draw_origin();
 
     glPushMatrix();
     glLoadIdentity();
@@ -53,13 +53,13 @@ void timer(int ignore)
         }
     }
 
-    racgra::redisplay_all();
+    utility::redisplay_all();
     glutTimerFunc(physics::refresh_ms, timer, 0);
 }
 
 void keyboard(unsigned char key, int mousex, int mousey)
 {
-    racgra::camera_control(key, 0.5);
+    utility::camera_control(key, 0.5);
     switch (key)
     {
     case '+':
@@ -201,18 +201,18 @@ int main(int argc, char **argv)
     glutInitWindowSize(1024, 756);
     glutInitWindowPosition(100, 100);
 
-    racgra::camera_ = {8, 8, 4};
-    racgra::near_ = 0.1;
-    racgra::far_ = 100;
-    racgra::fovy_ = 45;
+    utility::camera_ = {8, 8, 4};
+    utility::near_ = 0.1;
+    utility::far_ = 100;
+    utility::fovy_ = 45;
 
-    racgra::window_ = static_cast<GLuint>(glutCreateWindow("Gummy face"));
-    glutReshapeFunc(racgra::reshape);
+    utility::window_ = static_cast<GLuint>(glutCreateWindow("Gummy face"));
+    glutReshapeFunc(utility::reshape);
     glutDisplayFunc(display);
     glutKeyboardFunc(keyboard);
-    glutMouseFunc(racgra::mouse_wheel);
+    glutMouseFunc(utility::mouse_wheel);
 
-    racgra::redisplay_all();
+    utility::redisplay_all();
     timer(0);
     glutMainLoop();
     return 0;

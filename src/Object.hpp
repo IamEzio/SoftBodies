@@ -1,5 +1,5 @@
-#ifndef PROJEKT_OBJECT_HPP
-#define PROJEKT_OBJECT_HPP
+#ifndef PROJECT_OBJECT_HPP
+#define PROJECT_OBJECT_HPP
 
 #include <string>
 #include <iostream>
@@ -72,7 +72,7 @@ public:
     }
 
     void draw(bool points = false) const {
-        if (texture_data && !racgra::wire_) { // Set texture.
+        if (texture_data && !utility::wire_) { // Set texture.
             glEnable(GL_TEXTURE_2D);
             glEnable(GL_DEPTH_TEST);
             glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
@@ -85,7 +85,7 @@ public:
                          0, GL_BGR, GL_UNSIGNED_BYTE, texture_data);
         }
         for (const fac &f : faces_) {
-            glBegin((texture_data && !racgra::wire_) ? GL_TRIANGLES : GL_LINE_LOOP);
+            glBegin((texture_data && !utility::wire_) ? GL_TRIANGLES : GL_LINE_LOOP);
             for (uint i = 0; i < 3; i++) {
                 const Vertex &v = vertices_.at(f.vertices[i]);
                 if (texture_data) {
@@ -95,7 +95,7 @@ public:
             }
             glEnd();
         }
-        if (texture_data && !racgra::wire_) {
+        if (texture_data && !utility::wire_) {
             glDisable(GL_TEXTURE_2D);
         }
     }
@@ -382,4 +382,4 @@ public:
 };
 
 
-#endif //PROJEKT_OBJECT_HPP
+#endif //PROJECT_OBJECT_HPP
