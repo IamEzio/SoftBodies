@@ -12,4 +12,4 @@ orb 0.3                                                                # Object 
 # mass x y z model_file texture_file
 o 10.0 0.0 0.0 3.0 ../res/objects/pyramid.obj ../res/textures/redjelly.bmp    # Define objects and their parameters
 # o 10.0 1.5 0.0 0.0 ../res/objects/pyramid.obj ../res/textures/rubiks.bmp # (texutre is optional, but leave an '_')
-o 3.0 0.0 0.0 5.0 ../res/objects/okcube.obj ../res/textures/bluejelly.bmp
+o 2.0 0.0 0.0 5.0 ../res/objects/okcube.obj ../res/textures/bluejelly.bmp
