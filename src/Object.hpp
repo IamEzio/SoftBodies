@@ -168,7 +168,8 @@ public:
             Vector3d &position = vertices_[i].position;
 
             vertices_[i].velocity = vertices_[i].velocity + dt * vertices_[i].acceleration;
-            position += dt * (vertices_[i].velocity + 0.5 * dt * vertices_[i].acceleration);
+            // position += dt * (vertices_[i].velocity + 0.5 * dt * vertices_[i].acceleration);
+            position += vertices_[i].velocity * dt;
 
             // Force ground.
             if (position[2] < 0) {
