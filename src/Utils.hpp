@@ -86,59 +86,21 @@ namespace racgra {
 
     void camera_control(char c, double amount) {
         switch (c) {
-            // Z-axis
-            case 'r':
-                camera_[2] += amount;
-                // lookat_[2] += amount;
-                break;
-            case 'f':
-                camera_[2] -= amount;
-                // lookat_[2] -= amount;
-                break;
-                // X-axis
-            // case 'a':
-                // camera_[0] += amount;
-                // lookat_[0] += amount;
-                // break;
-            // case 'd':
-                // camera_[0] -= amount;
-                // lookat_[0] -= amount;
-                // break;
-                // Y-axis
-            // case 'q':
-            //     camera_[1] += amount;
-            //     lookat_[1] += amount;
-            //     break;
-            // case 'e':
-            //     camera_[1] -= amount;
-            //     camera_[1] -= amount;
-            //     break;
-                // FOVY
-            case 'u':
-                fovy_ -= 10 * amount;
-                break;
-            case 'o':
-                fovy_ += 10 * amount;
-                break;
-                // Center zoom
-            // case 'k':
-            case 's':
-                zoom(false, amount_);
-                break;
-            // case 'i':
-            case 'w':
-                zoom(true, amount_);
-                break;
-                // Rotate around center.
-            // case 'l':
-            case 'd':
+            case 'a':
                 angle_ += 5;
                 break;
-            // case 'j':
-            case 'a':
+            case 'd':
                 angle_ -= 5;
                 break;
-                // Wire or some polygon view.
+            case 'w':
+                camera_[2] += amount;
+                break;
+            case 's':
+                camera_[2] -= amount;
+                break;
+            case 'z':
+                zoom(false, amount_);
+                break;
             case 'x':
                 wire_ = !wire_;
                 break;
