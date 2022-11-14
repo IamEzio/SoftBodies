@@ -103,7 +103,7 @@ int main(int argc, char **argv)
                 continue;
             }
 
-            const char *model_file = (obj == 1) ? "../res/objects/okcube.obj" : "../res/objects/pyramid.obj";
+            const char *model_file = (obj == 1) ? "../res/objects/fixcube.obj" : "../res/objects/pyramid.obj";
             std::cout << "Enter data: <mass> <x-coordinate> <y-coordinate> <z-coordinate>\n";
             double mass, x, y, z;
             std::cin >> mass >> x >> y >> z;

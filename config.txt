@@ -2,13 +2,13 @@ rms 16                                                                  # Refres
 eul 2                                                                  # Euler iterations between draws
 
 g 0.0 0.0 -5.0                                                          # Gravity vector
-k 20                                                                   # Spring constant
-kt 0.5                                                                   # Spring velocity decay
+k 100                                                                   # Spring constant
+kt 0.1                                                                   # Spring velocity decay
 grb 0.9                                                                 # Ground rebound coef
-orb 0.5                                                                # Object rebound coef
+orb 0.9                                                                # Object rebound coef
 
 # Define objects and their parameters
 # (texture is optional, but leave an '_')
 # mass x y z model_file texture_file
 o 10.0 0.0 0.0 3.0 ../res/objects/fixcube.obj ../res/textures/redjelly.bmp
-o 10.0 0.6 0.6 5.0 ../res/objects/fixcube.obj ../res/textures/bluejelly.bmp
+o 3.0 0.6 0.6 5.0 ../res/objects/fixcube.obj ../res/textures/bluejelly.bmp
