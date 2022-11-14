@@ -7,7 +7,6 @@
 bool paused_ = true;
 char *config_filepath = "../config.txt";
 std::vector<Object> objects_;
-std::vector<std::vector<double>> initial;
 
 void display()
 {
@@ -22,7 +21,7 @@ void display()
 
     for (const Object &o : objects_)
     {
-        o.draw(false);
+        o.draw();
     }
 
     glPopMatrix();
@@ -108,7 +107,6 @@ int main(int argc, char **argv)
             std::cout << "Enter data: <mass> <x-coordinate> <y-coordinate> <z-coordinate>\n";
             double mass, x, y, z;
             std::cin >> mass >> x >> y >> z;
-            initial.push_back({x, y, z});
             Object o(mass);
             o.load(model_file);
             o.normalize();
@@ -156,7 +154,6 @@ int main(int argc, char **argv)
                 Object o(mass);
                 o.load(model_file);
                 o.normalize();
-                initial.push_back({x, y, z});
                 o.move({x, y, z});
                 if (std::strcmp(texture_file, "_") != 0)
                 {
@@ -206,7 +203,7 @@ int main(int argc, char **argv)
     utility::far_ = 100;
     utility::fovy_ = 45;
 
-    utility::window_ = static_cast<GLuint>(glutCreateWindow("Gummy face"));
+    utility::window_ = static_cast<GLuint>(glutCreateWindow("Soft Body Simulation"));
     glutReshapeFunc(utility::reshape);
     glutDisplayFunc(display);
     glutKeyboardFunc(keyboard);

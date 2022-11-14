@@ -64,6 +64,7 @@ private:
     // Texture data.
     unsigned int texture_width, texture_height;
     unsigned char *texture_data = nullptr;
+
 public:
 
     Object(double mass, bool soft = true) : mass_(mass), shape(shapes::Cube(shapes::bound())), soft_(soft) {
@@ -71,7 +72,7 @@ public:
         kt_ = physics::spring_kt;
     }
 
-    void draw(bool points = false) const {
+    void draw() const {
         if (texture_data && !utility::wire_) { // Set texture.
             glEnable(GL_TEXTURE_2D);
             glEnable(GL_DEPTH_TEST);
@@ -138,7 +139,9 @@ private:
 
         Vector3d velocity = vertices_[v2].velocity - vertices_[v1].velocity;
 
-        return (compression * k_ + diff.dot(velocity) * kt_) * diff;
+        // return (compression * k_ + diff.dot(velocity) * kt_) * diff;
+        return k_* compression * diff;
+
     }
 
 public:
@@ -158,6 +161,7 @@ public:
                 if (vertices_[j].movable)
                     vertices_[j].acceleration -= force / vertices_[j].mass;
             }
+            vertices_[i].acceleration -= kt_*vertices_[i].velocity/vertices_[i].mass;
         }
 
         // Apply forces to vertices.
@@ -183,9 +187,14 @@ public:
         }
     }
 
+    // p - posn of vertice to check
+    // value - variable to store amt inside
+    // norm - normal direction of collision
+    // v - 
     bool isInside(const Vector3d &p, double &value, Vector3d &norm, Vector3d &v) {
         bool t = false;
         value = -DBL_MAX;
+        
         for (const fac &f : faces_) {
             Vector3d v1 = vertices_[f[1]].position - vertices_[f[0]].position;
             Vector3d v2 = vertices_[f[2]].position - vertices_[f[0]].position;
@@ -248,6 +257,9 @@ private:
         if (val[2] > shape.bounds.maxz) shape.bounds.maxz = val[2];
     }
 
+    // === PART FOR LOADING OBJ FILE
+
+    // functions for parsing model.obj file
     inline bool parse(const char *cmd, char *args, ulong line,
                       std::vector<Vector2d> &tmp_txtr, std::vector<Vector3d> &tmp_norm) {
         if (std::strcmp(cmd, "v") == 0) {  // Vertex.
@@ -326,6 +338,8 @@ private:
     }
 
 public:
+
+    // arg is path to model.obj
     void load(const char *filepath) {
         FILE *f = fopen(filepath, "r");
         if (!f)
